@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  
+</body>
+</html>doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stillform — Image Gallery</title>
+  <style>
+    :root { --ink:#17211f; --muted:#63706c; --paper:#f4f5ef; --line:#dfe4da; --accent:#e66d4e; --shadow:0 22px 55px rgba(27,42,35,.14); }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; color:var(--ink); background:var(--paper); font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .shell { max-width:1240px; margin:auto; padding:28px 28px 64px; }
+    header { display:flex; align-items:center; justify-content:space-between; gap:24px; padding:6px 0 54px; }
+    .brand { display:flex; align-items:center; gap:11px; font-size:17px; font-weight:800; letter-spacing:-.05em; }
+    .brand-mark { width:27px; height:27px; position:relative; border-radius:50% 50% 7px 50%; background:var(--accent); transform:rotate(30deg); }
+    .brand-mark:after { content:""; position:absolute; width:8px; height:8px; border-radius:50%; background:var(--paper); top:6px; left:7px; }
+    nav { display:flex; gap:22px; color:var(--muted); font-size:14px; }
+    nav a { color:inherit; text-decoration:none; }
+    .intro { display:grid; grid-template-columns:1.3fr .7fr; gap:30px; align-items:end; margin-bottom:41px; }
+    h1 { max-width:750px; margin:0; font-family:Georgia, "Times New Roman", serif; font-weight:400; font-size:clamp(43px, 7vw, 86px); letter-spacing:-.07em; line-height:.93; }
+    .intro p { max-width:340px; justify-self:end; margin:0 0 5px; color:var(--muted); line-height:1.6; font-size:15px; }
+    .tools { display:flex; justify-content:space-between; gap:20px; align-items:center; margin-bottom:25px; }
+    .filters { display:flex; flex-wrap:wrap; gap:8px; }
+    .filter { cursor:pointer; border:1px solid var(--line); border-radius:999px; padding:9px 15px; color:var(--muted); background:transparent; font:600 13px inherit; transition:.25s ease; }
+    .filter:hover, .filter.active { background:var(--ink); border-color:var(--ink); color:#fff; transform:translateY(-2px); }
+    .count { color:var(--muted); font-size:13px; white-space:nowrap; }
+    .gallery { display:grid; grid-template-columns:repeat(12, 1fr); grid-auto-flow:dense; gap:16px; }
+    .card { min-height:210px; position:relative; overflow:hidden; border-radius:5px; cursor:pointer; background:#c9d1c7; grid-column:span 4; transition:opacity .35s ease, transform .35s ease; }
+    .card.wide { grid-column:span 8; } .card.tall { grid-row:span 2; min-height:436px; } .card.hidden { display:none; }
+    .card img { width:100%; height:100%; position:absolute; object-fit:cover; inset:0; transition:transform .7s cubic-bezier(.2,.8,.2,1), filter .5s ease; }
+    .card:after { content:""; position:absolute; inset:0; background:linear-gradient(180deg, transparent 45%, rgba(11,20,16,.72)); opacity:.72; transition:opacity .3s ease; }
+    .card:hover { transform:translateY(-4px); box-shadow:var(--shadow); } .card:hover img { transform:scale(1.07); filter:saturate(1.13); } .card:hover:after { opacity:.95; }
+    .meta { position:absolute; z-index:1; left:18px; right:18px; bottom:15px; display:flex; justify-content:space-between; align-items:end; color:#fff; transform:translateY(4px); transition:.3s ease; }
+    .card:hover .meta { transform:none; } .meta h2 { margin:0 0 3px; font-size:16px; letter-spacing:-.035em; } .meta span { font-size:11px; opacity:.78; }
+    .open-icon { display:grid; place-items:center; width:31px; height:31px; border:1px solid rgba(255,255,255,.55); border-radius:50%; font-size:19px; font-weight:300; }
+    .footer { display:flex; justify-content:space-between; margin-top:42px; color:var(--muted); font-size:12px; }
+    .lightbox { position:fixed; z-index:10; inset:0; display:grid; place-items:center; padding:30px; background:rgba(13,20,17,.94); opacity:0; visibility:hidden; transition:.28s ease; }
+    .lightbox.open { opacity:1; visibility:visible; } .lightbox figure { width:min(100%, 1050px); margin:0; position:relative; }
+    .lightbox img { display:block; width:100%; max-height:78vh; object-fit:contain; border-radius:4px; box-shadow:0 16px 50px #0007; }
+    .lightbox figcaption { color:#f7f7f3; padding-top:13px; display:flex; justify-content:space-between; font-size:14px; }
+    .lightbox button { cursor:pointer; position:absolute; border:0; color:white; background:rgba(255,255,255,.12); width:44px; height:44px; border-radius:50%; font:300 28px/1 inherit; transition:.2s ease; }
+    .lightbox button:hover { background:var(--accent); } .close { top:-58px; right:0; font-size:26px!important; } .prev { left:-65px; top:calc(50% - 22px); } .next { right:-65px; top:calc(50% - 22px); }
+    @media (max-width:780px) { .shell { padding:22px 16px 40px; } header { padding-bottom:38px; } nav { display:none; } .intro { grid-template-columns:1fr; gap:20px; } .intro p { justify-self:start; } .tools { align-items:flex-start; flex-direction:column; } .gallery { gap:10px; } .card, .card.wide { grid-column:span 6; min-height:190px; } .card.tall { grid-row:span 2; min-height:390px; } .lightbox { padding:18px; } .prev { left:8px; } .next { right:8px; } .close { top:10px; right:10px; } }
+    @media (max-width:440px) { h1 { font-size:49px; } .card, .card.wide { grid-column:span 12; min-height:250px; } .card.tall { grid-row:span 1; min-height:320px; } }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header><div class="brand"><i class="brand-mark"></i>stillform</div><nav><a href="#gallery">Collection</a><a href="#about">About</a><a href="#contact">Contact</a></nav></header>
+    <section class="intro" id="about"><h1>Observations from a quieter world.</h1><p>A small, growing selection of photographs shaped by color, texture, and the beautiful in-between.</p></section>
+    <section id="gallery"><div class="tools"><div class="filters" aria-label="Filter photographs"><button class="filter active" data-filter="all">All work</button><button class="filter" data-filter="nature">Nature</button><button class="filter" data-filter="architecture">Architecture</button><button class="filter" data-filter="people">People</button></div><span class="count"><b id="imageCount">8</b> photographs</span></div>
+      <div class="gallery" aria-live="polite">
+        <article class="card wide" data-category="nature" data-title="Wild Coast" data-place="Reykjanes, Iceland"><img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1400&q=85" alt="Golden grass beneath a misty mountain" /><div class="meta"><div><h2>Wild Coast</h2><span>Reykjanes, Iceland</span></div><i class="open-icon">+</i></div></article>
+        <article class="card tall" data-category="architecture" data-title="Sunlit Geometry" data-place="Lisbon, Portugal"><img src="https://images.unsplash.com/photo-1524230572899-a752b3835840?auto=format&fit=crop&w=900&q=85" alt="A warm geometric building facade" /><div class="meta"><div><h2>Sunlit Geometry</h2><span>Lisbon, Portugal</span></div><i class="open-icon">+</i></div></article>
+        <article class="card" data-category="people" data-title="Window Seat" data-place="Oslo, Norway"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=900&q=85" alt="Portrait of a woman in soft light" /><div class="meta"><div><h2>Window Seat</h2><span>Oslo, Norway</span></div><i class="open-icon">+</i></div></article>
+        <article class="card" data-category="nature" data-title="Still Water" data-place="Hallstatt, Austria"><img src="https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=85" alt="A serene lake and mountain reflection" /><div class="meta"><div><h2>Still Water</h2><span>Hallstatt, Austria</span></div><i class="open-icon">+</i></div></article>
+        <article class="card" data-category="architecture" data-title="Quiet Corner" data-place="Copenhagen, Denmark"><img src="https://images.unsplash.com/photo-1487958449943-2429e8be8625?auto=format&fit=crop&w=900&q=85" alt="Modern concrete architectural exterior" /><div class="meta"><div><h2>Quiet Corner</h2><span>Copenhagen, Denmark</span></div><i class="open-icon">+</i></div></article>
+        <article class="card" data-category="people" data-title="After Rain" data-place="Tokyo, Japan"><img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=900&q=85" alt="A person in a street portrait" /><div class="meta"><div><h2>After Rain</h2><span>Tokyo, Japan</span></div><i class="open-icon">+</i></div></article>
+        <article class="card" data-category="nature" data-title="Desert Bloom" data-place="Namib, Namibia"><img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=900&q=85" alt="Sculpted desert sand dunes" /><div class="meta"><div><h2>Desert Bloom</h2><span>Namib, Namibia</span></div><i class="open-icon">+</i></div></article>
+        <article class="card wide" data-category="architecture" data-title="Linear Light" data-place="New York, USA"><img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=85" alt="Minimal contemporary interior" /><div class="meta"><div><h2>Linear Light</h2><span>New York, USA</span></div><i class="open-icon">+</i></div></article>
+      </div></section>
+    <footer class="footer" id="contact"><span>© 2026 Stillform</span><span>Made for slow looking</span></footer>
+  </main>
+  <section class="lightbox" aria-modal="true" role="dialog" aria-label="Image viewer"><figure><button class="close" aria-label="Close viewer">×</button><button class="prev" aria-label="Previous image">‹</button><img src="" alt="" /><button class="next" aria-label="Next image">›</button><figcaption><span class="caption-title"></span><span class="caption-place"></span></figcaption></figure></section>
+  <script>
+    const cards = [...document.querySelectorAll('.card')], filters = [...document.querySelectorAll('.filter')];
+    const modal = document.querySelector('.lightbox'), modalImg = modal.querySelector('img'), title = modal.querySelector('.caption-title'), place = modal.querySelector('.caption-place');
+    let visible = cards, current = 0;
+    function setViewer(index) { current = (index + visible.length) % visible.length; const card = visible[current], img = card.querySelector('img'); modalImg.src = img.src; modalImg.alt = img.alt; title.textContent = card.dataset.title; place.textContent = card.dataset.place; }
+    function open(index) { setViewer(index); modal.classList.add('open'); document.body.style.overflow = 'hidden'; modal.querySelector('.close').focus(); }
+    function close() { modal.classList.remove('open'); document.body.style.overflow = ''; }
+    cards.forEach(card => card.addEventListener('click', () => open(visible.indexOf(card))));
+    filters.forEach(button => button.addEventListener('click', () => { const category = button.dataset.filter; filters.forEach(b => b.classList.toggle('active', b === button)); cards.forEach(c => c.classList.toggle('hidden', category !== 'all' && c.dataset.category !== category)); visible = cards.filter(c => !c.classList.contains('hidden')); document.getElementById('imageCount').textContent = visible.length; }));
+    modal.querySelector('.close').onclick = close; modal.querySelector('.prev').onclick = () => setViewer(current - 1); modal.querySelector('.next').onclick = () => setViewer(current + 1);
+    modal.addEventListener('click', e => { if (e.target === modal) close(); });
+    document.addEventListener('keydown', e => { if (!modal.classList.contains('open')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft') setViewer(current - 1); if (e.key === 'ArrowRight') setViewer(current + 1); });
+  </script>
+</body>
+</html>
